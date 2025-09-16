@@ -1,0 +1,160 @@
+# Default application configuration
+applications:
+  - id: "app"
+    name: "Default Application"
+    description: "Default application for testing"
+    privacyKeys:
+      - "default-key"
+      - "public"
+      - "priv"
+
+# Registry of agents we can orchestrate
+registry:
+
+  opendeepresearch_agent:
+    options:
+      - name: "MISTRAL_API_KEY"
+        type: "string"
+        description: "API Key for Mistral models"
+        default: "J1s9763ojFo1ERLpNRJhogsrDdnmHbHP"   # Replace with real key
+      - name: "LINKUP_API_KEY"
+        type: "string"
+        description: "Linkup API Key"
+        default: "9ffb5ac3-1d3f-4ad5-962c-e73885f81933"
+      - name: "MODEL_NAME"
+        type: "string"
+        description: "Model name to use"
+        default: "mistral-large-latest"
+      - name: "MODEL_PROVIDER"
+        type: "string"
+        description: "Model provider"
+        default: "mistralai"
+      - name: "MODEL_MAX_TOKENS"
+        type: "string"
+        description: "Maximum tokens"
+        default: "16000"
+      - name: "MODEL_TEMPERATURE"
+        type: "string"
+        description: "Sampling temperature"
+        default: "0.3"
+    runtime:
+      type: "executable"
+      command:
+        - "powershell"
+        - "-ExecutionPolicy"
+        - "Bypass"
+        - "-Command"
+        - "\"D:/Coral/RegiSphere/Coral-OpenDeepResearch-Agent/.venv/Scripts/python.exe\" \"D:/Coral/RegiSphere/Coral-OpenDeepResearch-Agent/main.py\""
+      environment:
+        - option: "MISTRAL_API_KEY"
+        - option: "LINKUP_API_KEY"
+        - option: "MODEL_NAME"
+        - option: "MODEL_PROVIDER"
+        - option: "MODEL_MAX_TOKENS"
+        - option: "MODEL_TEMPERATURE"
+
+  firecrawl_agent:
+    options:
+      - name: "MODEL_API_KEY"
+        type: "string"
+        description: "API key for the model provider"
+        default: "J1s9763ojFo1ERLpNRJhogsrDdnmHbHP"
+      - name: "MODEL_NAME"
+        type: "string"
+        description: "LLM model for summarization/extraction"
+        default: "mistral-large-latest"
+      - name: "MODEL_PROVIDER"
+        type: "string"
+        description: "Provider (mistralai/openai)"
+        default: "mistralai"
+      - name: "MODEL_MAX_TOKENS"
+        type: "string"
+        description: "Maximum tokens"
+        default: "16000"
+      - name: "MODEL_TEMPERATURE"
+        type: "string"
+        description: "Temperature for generation"
+        default: "0.3"
+    runtime:
+      type: "executable"
+      command:
+        - "powershell"
+        - "-ExecutionPolicy"
+        - "Bypass"
+        - "-Command"
+        - "\"D:/Coral/RegiSphere/Coral-FirecrawlMCP-Agent/.venv/Scripts/python.exe\" \"D:/Coral/RegiSphere/Coral-FirecrawlMCP-Agent/main.py\""
+      environment:
+        - option: "MODEL_API_KEY"
+        - option: "MODEL_NAME"
+        - option: "MODEL_PROVIDER"
+        - option: "MODEL_MAX_TOKENS"
+        - option: "MODEL_TEMPERATURE"
+
+  interface:
+    options:
+      - name: "MODEL_API_KEY"
+        type: "string"
+        description: "Mistral API Key"
+    runtime:
+      type: "executable"
+      command:
+        - "powershell"
+        - "-ExecutionPolicy"
+        - "Bypass"
+        - "-Command"
+        - "\"D:/Coral/RegiSphere/Coral-Interface-Agent/.venv/Scripts/python.exe\" \"D:/Coral/RegiSphere/Coral-interface-Agent/main.py\""
+      environment:
+        - option: "MODEL_API_KEY"
+
+  repo_understanding_agent:
+    options:
+      - name: "GITHUB_ACCESS_TOKEN"
+        type: "string"
+        description: "Personal Access Token for GitHub API"
+        default: "<your-github-token>"
+      - name: "MODEL_NAME"
+        type: "string"
+        description: "LLM used for summarization/explanation"
+        default: "mistral-large-latest"
+      - name: "MODEL_PROVIDER"
+        type: "string"
+        description: "Provider for the model (mistralai/groq)"
+        default: "mistralai"
+      - name: "API_KEY"
+        type: "string"
+        description: "API key for the selected LLM provider"
+        default: "J1s9763ojFo1ERLpNRJhogsrDdnmHbHP"
+      - name: "MODEL_TOKEN"
+        type: "string"
+        description: "Maximum tokens for generation"
+        default: "16000"
+      - name: "MODEL_TEMPERATURE"
+        type: "string"
+        description: "Temperature for creativity"
+        default: "0.3"
+      - name: "CORAL_SSE_URL"
+        type: "string"
+        description: "SSE endpoint for Coral Server"
+        default: "http://localhost:5555/devmode/exampleApplication/privkey/session1/sse"
+      - name: "CORAL_AGENT_ID"
+        type: "string"
+        description: "Unique agent ID"
+        default: "repo_understanding_agent"
+    runtime:
+      type: "executable"
+      command:
+        - "powershell"
+        - "-ExecutionPolicy"
+        - "Bypass"
+        - "-Command"
+        - "\"D:/Coral/RegiSphere/Coral-RepoUnderstanding-Agent/.venv/Scripts/python.exe\" \"D:/Coral/RegiSphere/Coral-RepoUnderstanding-Agent/main.py\""
+      environment:
+        - option: "GITHUB_ACCESS_TOKEN"
+        - option: "MODEL_NAME"
+        - option: "MODEL_PROVIDER"
+        - option: "API_KEY"
+        - option: "MODEL_TOKEN"
+        - option: "MODEL_TEMPERATURE"
+        - option: "CORAL_SSE_URL"
+        - option: "CORAL_AGENT_ID"
+
