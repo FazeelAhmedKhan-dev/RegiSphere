@@ -11,7 +11,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
     const [description, setDescription] = useState("");
     const [projectUrl, setProjectUrl] = useState("");
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!projectUrl.trim()) {
@@ -26,10 +26,36 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
             projectUrl: projectUrl.trim(),
         };
 
-        console.log("Uploading:", payload);
-        // TODO: Integrate FastAPI endpoint here
+        try {
+            console.log("Uploading:", payload);
+            
+            // Call FastAPI backend
+            const response = await fetch('http://localhost:8000/api/projects/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
 
-        onUploadComplete();
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Upload successful:', result);
+            
+            // Extract session_id from response
+            if (result.session_id) {
+                onUploadComplete(result.session_id);
+            } else {
+                throw new Error('No session ID received from server');
+            }
+            
+        } catch (error) {
+            console.error('Error uploading project:', error);
+            alert('Failed to upload project. Please try again.');
+        }
     };
 
     return (

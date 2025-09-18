@@ -20,30 +20,58 @@ export default function Pipeline({ steps: initialSteps, onComplete }: PipelinePr
     const [steps, setSteps] = useState<AgentStep[]>(initialSteps);
 
     useEffect(() => {
-        let i = 0;
-        const interval = setInterval(() => {
-            setSteps((prev) => {
-                const next = [...prev];
-                if (i < next.length) {
-                    next[i].status = "running";
-                    next[i].message = `Running ${next[i].name}…`;
-                }
-                if (i > 0 && i - 1 < next.length) {
-                    next[i - 1].status = "done";
-                    next[i - 1].message = `${next[i - 1].name} completed`;
-                }
-                return next;
-            });
+        // Get session ID from URL params or props
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('sessionId');
+        
+        if (!sessionId) {
+            console.error('No session ID found');
+            return;
+        }
 
-            i++;
-            if (i > initialSteps.length) {
+        const fetchPipelineStatus = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/api/pipeline/${sessionId}/status`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Pipeline status:', data);
+                
+                // Update steps with real data from backend
+                setSteps(data.steps.map((step: any) => ({
+                    id: step.id,
+                    name: step.name,
+                    status: step.status,
+                    message: step.message
+                })));
+                
+                // Stop polling if pipeline is completed or errored
+                if (data.status === 'completed' || data.status === 'error') {
+                    return true; // Signal to stop polling
+                }
+                
+            } catch (error) {
+                console.error('Error fetching pipeline status:', error);
+            }
+            return false;
+        };
+
+        // Initial fetch
+        fetchPipelineStatus();
+
+        // Poll for updates every 2 seconds
+        const interval = setInterval(async () => {
+            const shouldStop = await fetchPipelineStatus();
+            if (shouldStop) {
                 clearInterval(interval);
-                onComplete?.();
             }
         }, 2000);
 
         return () => clearInterval(interval);
-    }, [initialSteps, onComplete]);
+    }, []);
 
     const completed = steps.filter((s) => s.status === "done").length;
     const progress = Math.round((completed / steps.length) * 100);

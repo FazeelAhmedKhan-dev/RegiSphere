@@ -3,17 +3,34 @@ import Sidebar from "./components/Sidebar";
 import Header, { NavBar } from "./components/Header";
 import UploadForm from "./components/UploadForm";
 import Pipeline from "./components/Pipeline";
+import Report from "./components/Report";
 
 export default function App() {
   // Track which screen the user is on
   const [view, setView] = useState<"upload" | "pipeline" | "report">("upload");
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
-  // Demo pipeline agents
+  const handleUploadComplete = (uploadSessionId?: string) => {
+    if (uploadSessionId) {
+      setSessionId(uploadSessionId);
+      // Update URL with session ID
+      const url = new URL(window.location.href);
+      url.searchParams.set('sessionId', uploadSessionId);
+      window.history.pushState({}, '', url.toString());
+    }
+    setView("pipeline");
+  };
+
+  const handlePipelineComplete = () => {
+    setView("report");
+  };
+
+  // Interface Agent orchestrated pipeline
   const agents = [
-    { id: "1", name: "Repo Understanding Agent", status: "pending" as const },
-    { id: "2", name: "Compliance Rules Checker", status: "pending" as const },
-    { id: "3", name: "Risk Analyzer", status: "pending" as const },
-    { id: "4", name: "Report Generator", status: "pending" as const },
+    { id: "1", name: "Interface Agent - Repository Analysis", status: "pending" as const },
+    { id: "2", name: "FirecrawlMCP - Compliance Standards", status: "pending" as const },
+    { id: "3", name: "OpenDeepResearch - Risk Analysis", status: "pending" as const },
+    { id: "4", name: "RepoUnderstanding - Code Assessment", status: "pending" as const },
   ];
 
   return (
@@ -32,17 +49,15 @@ export default function App() {
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-6 space-y-8">
           {view === "upload" && (
-            <UploadForm onUploadComplete={() => setView("pipeline")} />
+            <UploadForm onUploadComplete={handleUploadComplete} />
           )}
 
           {view === "pipeline" && (
-            <Pipeline steps={agents} onComplete={() => setView("report")} />
+            <Pipeline steps={agents} onComplete={handlePipelineComplete} />
           )}
 
           {view === "report" && (
-            <div className="p-8 text-center text-lg">
-              ✅ Final compliance report goes here
-            </div>
+            <Report sessionId={sessionId} />
           )}
         </main>
       </div>
