@@ -1,0 +1,11 @@
+[[local-agent]]
+path = "Coral-Agents/Coral-Interface-Agent"
+
+[[local-agent]]
+path = "Coral-Agents/Coral-RepoUnderstanding-Agent"
+
+[[local-agent]]
+path = "Coral-Agents/Coral-OpenDeepResearch-Agent"
+
+[[local-agent]]
+path = "Coral-Agents/Coral-FirecrawlMCP-Agent"  # if you have a firewall agent

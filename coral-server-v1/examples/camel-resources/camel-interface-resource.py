@@ -122,7 +122,7 @@ async def main():
     model = ModelFactory.create(
         model_platform=ModelPlatformType.OPENAI,
         model_type=ModelType.GPT_4O_MINI,
-        api_key=os.getenv("OPENAI_API_KEY"),
+        api_key=os.getenv("MODEL_API_KEY"),
         model_config_dict={"temperature": 0.3, "max_tokens": 16000},
     )
 

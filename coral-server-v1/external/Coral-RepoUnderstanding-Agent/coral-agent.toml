@@ -45,8 +45,8 @@ default = "300"
 [runtimes.executable]
 command = [
   "powershell", "-ExecutionPolicy", "Bypass", "-Command",
-  "D:/Coral/RegiSphere/Coral-Agents/Coral-RepoUnderstanding-Agent/.venv/Scripts/python.exe",
-  "D:/Coral/RegiSphere/Coral-Agents/Coral-RepoUnderstanding-Agent/main.py"
+  "D:/RegiSphere/Coral-Agents/Coral-RepoUnderstanding-Agent/venv/Scripts/python.exe",
+  "D:/RegiSphere/Coral-Agents/Coral-RepoUnderstanding-Agent/main.py"
 ]
 
 # Alternative command for another system (Linux/MacOS)
