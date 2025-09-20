@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Upload } from "lucide-react";
 
 type UploadFormProps = {
-    onUploadComplete: () => void;
+    onUploadComplete: (sessionId: string) => void;
 };
 
 export default function UploadForm({ onUploadComplete }: UploadFormProps) {
@@ -22,18 +22,17 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
         const payload = {
             projectName: projectName.trim(),
             projectType,
-            description: description.trim(),
+            projectDescription: description.trim(), // ✅ matches backend model
             projectUrl: projectUrl.trim(),
         };
 
         try {
             console.log("Uploading:", payload);
-            
-            // Call FastAPI backend
-            const response = await fetch('http://localhost:8000/api/projects/upload', {
-                method: 'POST',
+
+            const response = await fetch("http://localhost:8000/api/projects/upload", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify(payload),
             });
@@ -43,18 +42,16 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
             }
 
             const result = await response.json();
-            console.log('Upload successful:', result);
-            
-            // Extract session_id from response
+            console.log("Upload successful:", result);
+
             if (result.session_id) {
                 onUploadComplete(result.session_id);
             } else {
-                throw new Error('No session ID received from server');
+                throw new Error("No session ID received from server");
             }
-            
         } catch (error) {
-            console.error('Error uploading project:', error);
-            alert('Failed to upload project. Please try again.');
+            console.error("Error uploading project:", error);
+            alert("Failed to upload project. Please try again.");
         }
     };
 

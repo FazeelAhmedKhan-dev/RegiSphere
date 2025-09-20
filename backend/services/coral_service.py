@@ -12,8 +12,8 @@ class CoralService:
 
     def __init__(self):
         self.base_url = os.getenv("CORAL_SERVER_URL", "http://localhost:5555/api/v1")
-        self.application_id = os.getenv("CORAL_SERVER_APPID", "agent-1")
-        self.privacy_key = os.getenv("CORAL_SERVER_PRIVKEY", "1234")
+        self.application_id = os.getenv("CORAL_SERVER_APPID", "app")
+        self.privacy_key = os.getenv("CORAL_SERVER_PRIVKEY", "priv")
 
     def get_coral_server_info(self) -> dict:
         """Return Coral server information"""
@@ -65,7 +65,6 @@ class CoralService:
         groups = config["agentGraphRequest"].get("groups", [])
         custom_tools = config["agentGraphRequest"].get("customTools", {})
 
-        # Nếu session_id được truyền vào, dùng nó; nếu không, dùng sessionId trong file (nếu có)
         session_id = session_id or config.get("sessionId", "session-001")
 
         return await self.create_session(
@@ -105,7 +104,10 @@ class CoralService:
         """
         Create a thread directly for an agent interface (debug thread)
         """
-        url = f"{self.base_url}/debug/thread/{privacy_key}/{application_id}/{coral_session_id}/{debug_agent_id}"
+        url = (
+            f"{self.base_url}/debug/thread/"
+            f"{application_id}/{privacy_key}/{coral_session_id}/{debug_agent_id}"
+        )
 
         payload = {
             "threadName": thread_name,
@@ -119,20 +121,21 @@ class CoralService:
 
     async def send_message(
         self,
+        application_id: str,
+        privacy_key: str,
         coral_session_id: str,
-        debug_agent_id: str,
         thread_id: str,
         content: str,
         mentions: List[str] = None,
-    ) -> Dict[str, Any]:
-        """
-            Send a message to a thread using the Coral debug/thread/sendMessage endpoint
-            URL: /debug/thread/sendMessage/{applicationId}/{privacyKey}/{coralSessionId}/{debugAgentId}
-        """
-        url = (
-            f"{self.base_url}/debug/thread/sendMessage/"
-            f"{self.application_id}/{self.privacy_key}/{coral_session_id}/{debug_agent_id}"
-        )
+        debug_agent_id: str = None,
+    ):
+        if debug_agent_id:
+            url = (
+                f"{self.base_url}/debug/thread/sendMessage/"
+                f"{application_id}/{privacy_key}/{coral_session_id}/{debug_agent_id}"
+            )
+        else:
+            url = f"{self.base_url}/message/{application_id}/{privacy_key}/{coral_session_id}"
 
         payload = {
             "threadId": thread_id,
@@ -141,14 +144,11 @@ class CoralService:
         }
 
         async with httpx.AsyncClient() as client:
-            resp = await client.post(
-                url,
-                json=payload,
-                headers={"Content-Type": "application/json"},
-                timeout=30.0,
-            )
+            resp = await client.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=30)
             resp.raise_for_status()
             return resp.json()
+
+
 
     async def get_agents(self) -> List[Dict[str, Any]]:
         """Fetch all agents from Coral-Server"""

@@ -19,6 +19,6 @@ description = "API key for the model provider"
 
 [runtimes.executable]
 command = [
-    "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/.venv/Scripts/python.exe",
+    "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/venv/Scripts/python.exe",
     "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/main.py"
 ]

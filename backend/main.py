@@ -41,12 +41,18 @@ pipeline_sessions: Dict[str, Dict[str, Any]] = {}
 # Initialize agent service
 agent_service = AgentService()
 
+# --- FIX: define coral_session globally ---
+coral_session: Optional[Dict[str, Any]] = None
+
 
 @app.on_event("startup")
 async def startup_event():
     """Initialize the agent service on startup"""
+    global coral_session
     try:
-        global coral_session
+        coral_session = await coral_service.create_session_from_file(
+            "session/data.json", "startup"
+        )
         logger.info(f"Coral session created: {coral_session}")
     except Exception as e:
         logger.error(f"Failed to initialize Coral session: {e}")
@@ -82,30 +88,10 @@ async def upload_project(project: ProjectUpload, background_tasks: BackgroundTas
             "project": project.model_dump(),
             "status": "initialized",
             "steps": [
-                {
-                    "id": "1",
-                    "name": "Repo Understanding Agent",
-                    "status": "pending",
-                    "message": "Waiting to start...",
-                },
-                {
-                    "id": "2",
-                    "name": "Compliance Rules Checker",
-                    "status": "pending",
-                    "message": "Waiting to start...",
-                },
-                {
-                    "id": "3",
-                    "name": "Risk Analyzer",
-                    "status": "pending",
-                    "message": "Waiting to start...",
-                },
-                {
-                    "id": "4",
-                    "name": "Report Generator",
-                    "status": "pending",
-                    "message": "Waiting to start...",
-                },
+                {"id": "1", "name": "Repo Understanding Agent", "status": "pending", "message": "Waiting to start..."},
+                {"id": "2", "name": "Compliance Rules Checker", "status": "pending", "message": "Waiting to start..."},
+                {"id": "3", "name": "Risk Analyzer", "status": "pending", "message": "Waiting to start..."},
+                {"id": "4", "name": "Report Generator", "status": "pending", "message": "Waiting to start..."},
             ],
             "created_at": datetime.now().isoformat(),
         }
@@ -113,7 +99,6 @@ async def upload_project(project: ProjectUpload, background_tasks: BackgroundTas
         # Start background processing
         background_tasks.add_task(process_project_pipeline, session_id, project)
 
-    
         print("project noew", project)
         try:
             # Create session Coral from file
@@ -133,9 +118,10 @@ async def upload_project(project: ProjectUpload, background_tasks: BackgroundTas
 
             # Send message to interface
             await coral_service.send_message(
-                coral_session_id=session["sessionId"],
-                debug_agent_id="system",
+                coral_session_id=session["sessionId"],  # <-- use session id directly
                 thread_id=thread["id"],
+                application_id=coral["application_id"],       # <-- added
+                privacy_key=coral["privacy_key"],
                 content=(
                     f"📢 New project uploaded for compliance assessment\n\n"
                     f"**Project Name:** {project.projectName}\n"
@@ -153,12 +139,13 @@ async def upload_project(project: ProjectUpload, background_tasks: BackgroundTas
                     "Please return the results in a structured compliance report."
                 ),
                 mentions=["interface"],
+                debug_agent_id="interface", 
             )
 
             return {
                 "session_id": session["sessionId"],
                 "thread_id": thread["id"],
-                "message": "Project uploaded, session and thread created successfully.",
+                "content": "Project uploaded, session and thread created successfully.",
                 "status": "processing",
             }
         except Exception as e:
@@ -216,43 +203,22 @@ async def process_project_pipeline(session_id: str, project: ProjectUpload):
         session = pipeline_sessions[session_id]
         session["status"] = "processing"
 
-        # Single step: Interface Agent orchestrates all other agents
         logger.info(
             f"Sending repository {project.projectUrl} to Interface Agent for comprehensive compliance assessment"
         )
-        await update_step_status(
-            session_id, "1", "running", "Interface Agent analyzing repository..."
-        )
-        await update_step_status(
-            session_id, "2", "running", "FirecrawlMCP fetching compliance standards..."
-        )
-        await update_step_status(
-            session_id, "3", "running", "OpenDeepResearch conducting analysis..."
-        )
-        await update_step_status(
-            session_id, "4", "running", "RepoUnderstanding processing codebase..."
-        )
+        await update_step_status(session_id, "1", "running", "Interface Agent analyzing repository...")
+        await update_step_status(session_id, "2", "running", "FirecrawlMCP fetching compliance standards...")
+        await update_step_status(session_id, "3", "running", "OpenDeepResearch conducting analysis...")
+        await update_step_status(session_id, "4", "running", "RepoUnderstanding processing codebase...")
 
-        # Call Interface Agent with repo URL - it will orchestrate all other agents
         compliance_report = await agent_service.query_agent(project.projectUrl)
 
-        # Update all steps as completed
-        logger.info(f"Interface Agent completed comprehensive analysis")
-        await update_step_status(
-            session_id, "1", "done", "Repository structure analyzed"
-        )
-        await update_step_status(
-            session_id, "2", "done", "Compliance standards identified"
-        )
+        logger.info("Interface Agent completed comprehensive analysis")
+        await update_step_status(session_id, "1", "done", "Repository structure analyzed")
+        await update_step_status(session_id, "2", "done", "Compliance standards identified")
         await update_step_status(session_id, "3", "done", "Risk assessment completed")
-        await update_step_status(
-            session_id, "4", "done", "Comprehensive report generated"
-        )
+        await update_step_status(session_id, "4", "done", "Comprehensive report generated")
 
-        # Update session with final results
-        logger.info(
-            f"Compliance assessment completed successfully for session {session_id}"
-        )
         session["status"] = "completed"
         session["report"] = {
             "content": compliance_report,
@@ -272,8 +238,7 @@ async def process_project_pipeline(session_id: str, project: ProjectUpload):
 async def update_step_status(session_id: str, step_id: str, status: str, message: str):
     """Update the status of a specific pipeline step"""
     if session_id in pipeline_sessions:
-        steps = pipeline_sessions[session_id]["steps"]
-        for step in steps:
+        for step in pipeline_sessions[session_id]["steps"]:
             if step["id"] == step_id:
                 step["status"] = status
                 step["message"] = message
