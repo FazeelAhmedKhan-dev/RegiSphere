@@ -1,6 +1,242 @@
 @import "tailwindcss";
 
+/* Root Variables */
+:root {
+  --compliance-primary: #7c3aed;
+  --compliance-primary-light: #a855f7;
+  --compliance-primary-dark: #5b21b6;
+  --compliance-secondary: #3b82f6;
+  --compliance-accent: #10b981;
+  --compliance-warning: #f59e0b;
+  --compliance-error: #ef4444;
+  --compliance-gray-50: #f8fafc;
+  --compliance-gray-100: #f1f5f9;
+  --compliance-gray-200: #e2e8f0;
+  --compliance-gray-300: #cbd5e1;
+  --compliance-gray-400: #94a3b8;
+  --compliance-gray-500: #64748b;
+  --compliance-gray-600: #475569;
+  --compliance-gray-700: #334155;
+  --compliance-gray-800: #1e293b;
+  --compliance-gray-900: #0f172a;
+}
+
+/* Base Styles */
 body {
-  background-color: #f9fafb;
+  background-color: #f8fafc;
   color: #1f2937;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--compliance-primary) 0%, var(--compliance-primary-light) 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.1), 0 2px 4px -1px rgba(124, 58, 237, 0.06);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--compliance-primary-dark) 0%, var(--compliance-primary) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.1), 0 4px 6px -2px rgba(124, 58, 237, 0.05);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--compliance-primary);
+  border: 2px solid var(--compliance-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--compliance-primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Compliance Card Styles */
+.compliance-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.compliance-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Gradient Backgrounds */
+.compliance-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.compliance-gradient-secondary {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.compliance-gradient-bg {
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+}
+
+.dashboard-bg {
+  background: linear-gradient(135deg, #6B46C1 0%, #8B5CF6 50%, #A78BFA 100%);
+}
+
+/* Focus States */
+.focus-ring:focus {
+  outline: 2px solid var(--compliance-primary);
+  outline-offset: 2px;
+}
+
+/* Text Colors */
+.text-compliance-primary {
+  color: var(--compliance-primary);
+}
+
+.text-compliance-primary-light {
+  color: var(--compliance-primary-light);
+}
+
+.text-compliance-gray-400 {
+  color: var(--compliance-gray-400);
+}
+
+.text-compliance-gray-600 {
+  color: var(--compliance-gray-600);
+}
+
+.text-compliance-gray-900 {
+  color: var(--compliance-gray-900);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--compliance-gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--compliance-gray-400);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--compliance-gray-500);
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design Helpers */
+@media (max-width: 768px) {
+  .compliance-card {
+    padding: 1.5rem;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Loading States */
+.loading-spinner {
+  border: 3px solid var(--compliance-gray-200);
+  border-top: 3px solid var(--compliance-primary);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Status Indicators */
+.status-success {
+  background-color: var(--compliance-accent);
+  color: white;
+}
+
+.status-warning {
+  background-color: var(--compliance-warning);
+  color: white;
+}
+
+.status-error {
+  background-color: var(--compliance-error);
+  color: white;
+}
+
+.status-pending {
+  background-color: var(--compliance-gray-400);
+  color: white;
+}
+
+/* Glass Morphism Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Compliance Theme Specific */
+.compliance-hero-bg {
+  background: linear-gradient(135deg, 
+    rgba(124, 58, 237, 0.1) 0%, 
+    rgba(168, 85, 247, 0.05) 50%, 
+    rgba(59, 130, 246, 0.1) 100%);
+}
+
+.compliance-section-bg {
+  background: linear-gradient(180deg, 
+    rgba(248, 250, 252, 1) 0%, 
+    rgba(241, 245, 249, 0.8) 100%);
 }
