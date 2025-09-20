@@ -6,7 +6,7 @@ from typing import Dict, Any
 
 class AgentConfig:
     """Configuration for Interface Agent communication"""
-    
+        
     # Coral Interface Agent settings
     INTERFACE_AGENT_HOST = os.getenv("INTERFACE_AGENT_HOST", "localhost")
     INTERFACE_AGENT_PORT = int(os.getenv("INTERFACE_AGENT_PORT", "5174"))

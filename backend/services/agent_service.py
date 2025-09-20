@@ -17,7 +17,7 @@ class AgentService:
     def __init__(self):
         self.agent_process = None
         self.agent_url = "http://localhost:8001"  # Default agent URL
-        self.coral_agent_path = "d:\\RegiSphere\\Coral-Agents\\Coral-Interface-Agent"
+        self.coral_agent_path = "D:\something-coral\RegiSphere\Coral-Agents\Coral-Interface-Agent"
         self.is_initialized = False
         
     async def initialize(self):
@@ -432,8 +432,6 @@ Please provide a detailed analysis and return the complete compliance assessment
         Security: Basic security measures in place
         Code Quality: High, follows best practices
         """
-    
-
     
     async def cleanup(self):
         """Cleanup agent resources"""

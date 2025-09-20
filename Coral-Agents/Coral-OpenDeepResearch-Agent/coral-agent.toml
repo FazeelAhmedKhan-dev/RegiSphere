@@ -1,20 +1,20 @@
 [agent]
-name = "firecrawl"
+name = "deepsearch"
 version = "0.0.1"
-description = "Extracts and maps regulatory standards for automated compliance checks."
+description = "Conducts in-depth research to uncover compliance requirements and risks."
 
-[options.MODEL_API_KEY]
+[options.OPENAI_API_KEY]
 type = "string"
-description = "API key for the model provider"
+description = "OpenAI API key for the model provider"
 
-[options.FIRECRAWL_API_KEY]
+[options.LINKUP_API_KEY]
 type = "string"
-description = "FIRECRAWL API KEY for the service"
+description = "Linkup API key for orchestration"
 
 [options.MODEL_NAME]
 type = "string"
 description = "What model to use (e.g 'gpt-4.1')"
-default = "gpt-4.1"
+default = "gpt-4.1-mini"
 
 [options.MODEL_PROVIDER]
 type = "string"
@@ -38,6 +38,6 @@ default = "300"
 
 [runtimes.executable]
 command = [
-  "D:/RegiSphere/Coral-Agents/Coral-FirecrawlMCP-Agent/.venv/Scripts/python.exe",
-  "D:/RegiSphere/Coral-Agents/Coral-FirecrawlMCP-Agent/main.py"
+  "D:/RegiSphere/Coral-Agents/Coral-OpenDeepResearch-Agent/.venv/Scripts/python.exe",
+  "D:/RegiSphere/Coral-Agents/Coral-OpenDeepResearch-Agent/main.py"
 ]

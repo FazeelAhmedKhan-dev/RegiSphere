@@ -2,3 +2,4 @@ Run this command to set env config for my-config
 
 $env:CONFIG_FILE_PATH="D:/RegiSphere/coral-server-v1/src/main/resources/my-config/config.toml"
 $env:REGISTRY_FILE_PATH="D:/RegiSphere/coral-server-v1/src/main/resources/my-config/registry.toml"
+

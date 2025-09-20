@@ -1,6 +1,7 @@
 [agent]
 name = "github"
 version = "0.0.1"
+description = "Fetches and analyzes GitHub repositories for compliance insights."
 
 [options.MODEL_API_KEY]
 type = "string"

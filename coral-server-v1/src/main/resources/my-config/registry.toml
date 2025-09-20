@@ -7,4 +7,6 @@ path = "D:/RegiSphere/Coral-Agents/Coral-RepoUnderstanding-Agent"
 [[local-agent]]
 path = "D:/RegiSphere/Coral-Agents/Coral-FirecrawlMCP-Agent"  
 
+[[local-agent]]
+path = "D:/RegiSphere/Coral-Agents/Coral-OpenDeepResearch-Agent"  
 
