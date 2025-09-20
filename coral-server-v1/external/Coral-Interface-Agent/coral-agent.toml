@@ -1,0 +1,38 @@
+[agent]
+name = "Coral-interface"
+version = "0.0.1"
+description = "An agent that takes user input and interacts with other agents to fulfill requests"
+
+[options.MODEL_NAME]
+type = "string"
+default = "mistral-large-latest"
+
+[options.MODEL_PROVIDER]
+type = "string"
+default = "mistralai"
+
+[options.MODEL_API_KEY]
+type = "string"
+
+[options.MODEL_BASE_URL]
+type = "string"
+default = ""
+
+[options.MODEL_MAX_TOKENS]
+type = "string"
+default = "16000"
+
+[options.MODEL_TEMPERATURE]
+type = "string"
+default = "0.3"
+
+[options.TIMEOUT_MS]
+type = "string"
+default = "60000"
+
+[runtimes.executable]
+# Directly run Python with the script
+command = [
+    "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/venv/Scripts/python.exe",
+    "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/main.py"
+]

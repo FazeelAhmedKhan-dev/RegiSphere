@@ -1,0 +1,24 @@
+[agent]
+name = "interface"
+version = "0.0.1"
+description = "Handles user interaction via Coral server"
+
+[options.MODEL_NAME]
+type = "string"
+description = "Model name (e.g., mistral-large-latest)"
+default = "mistral-large-latest"
+
+[options.MODEL_PROVIDER]
+type = "string"
+description = "Model provider (e.g., mistralai, openai)"
+default = "mistralai"
+
+[options.MODEL_API_KEY]
+type = "string"
+description = "API key for the model provider"
+
+[runtimes.executable]
+command = [
+    "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/.venv/Scripts/python.exe",
+    "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/main.py"
+]
