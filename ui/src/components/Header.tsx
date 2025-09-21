@@ -1,3 +1,4 @@
+import { Bell, Search, Sun, User } from "lucide-react";
 import React from "react";
 
 export type ViewType = "upload" | "pipeline" | "report";
@@ -10,30 +11,52 @@ type NavBarProps = {
 
 export const NavBar: React.FC<NavBarProps> = ({ currentView, onNavigate, onBackToLanding }) => {
     return (
-        <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                    <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                            <h1 className="text-2xl font-bold text-purple-600">RegiSphere</h1>
-                        </div>
+        <nav className="h-16 bg-white shadow-sm border-b border-gray-200 w-full relative">
+            <div className="max-w-7xl mx-auto h-full flex items-center px-6">
+                {/* Center: Navigation buttons */}
+                <div className="flex items-center gap-4 mx-auto">
+                    {/* Home button */}
+                    {onBackToLanding && (
+                        <button
+                            onClick={onBackToLanding}
+                            className="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        >
+                            Home
+                        </button>
+                    )}
+                    
+                    {[
+                        { key: "upload", label: "Upload" },
+                        { key: "pipeline", label: "Pipeline" },
+                        { key: "report", label: "Report" },
+                    ].map(({ key, label }) => (
+                        <button
+                            key={key}
+                            onClick={() => onNavigate(key as ViewType)}
+                            className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${currentView === key
+                                    ? "bg-purple-600 text-white shadow-sm"
+                                    : "text-gray-600 hover:text-purple-600"
+                                }`}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Right: Search + Icons */}
+                <div className="absolute right-6 flex items-center gap-4">
+                    <div className="relative hidden sm:block">
+                        <Search className="absolute left-2 top-2 w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Search compliance rules..."
+                            className="pl-8 pr-3 py-1.5 text-sm rounded-md border focus:outline-none focus:ring focus:ring-purple-300"
+                        />
                     </div>
-                    <div className="hidden md:block">
-                        <div className="ml-10 flex items-baseline space-x-4">
-                            <button 
-                                onClick={onBackToLanding} 
-                                className="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                            >
-                                Home
-                            </button>
-                            <button className="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                Why It Matters
-                            </button>
-                            <button className="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                How It Works
-                            </button>
-                        </div>
-                    </div>
+
+                    <Sun className="w-5 h-5 text-gray-600 hover:text-purple-600 cursor-pointer" />
+                    <Bell className="w-5 h-5 text-gray-600 hover:text-purple-600 cursor-pointer" />
+                    <User className="w-6 h-6 rounded-full border text-gray-600 hover:text-purple-600 cursor-pointer" />
                 </div>
             </div>
         </nav>
