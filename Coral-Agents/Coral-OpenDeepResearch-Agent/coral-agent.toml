@@ -3,10 +3,10 @@ name = "deepsearch"
 version = "0.0.1"
 description = "Conducts in-depth research to uncover compliance requirements and risks."
 
-[options.API_Key]
+[options.API_KEY]
 type = "string"
 description = "Mistral API key for the model provider"
-default="1xzyNsZZWm8bRvjgSjkFTJgY9CAksQfr"
+default="c46141bd2ebb4e29a106798381b97d1f"
 
 [options.LINKUP_API_KEY]
 type = "string"
@@ -15,13 +15,19 @@ default="9ffb5ac3-1d3f-4ad5-962c-e73885f81933"
 
 [options.MODEL_NAME]
 type = "string"
-description = "What model to use (e.g 'gpt-4.1')"
-default = "mistral-large-latest"
+description = "Model name (e.g., mistral-large-latest)"
+default = "meta-llama/Llama-3-70b-chat-hf"
 
 [options.MODEL_PROVIDER]
 type = "string"
-description = "What model provider to use (e.g 'openai', etc)"
-default="mistralai"
+description = "Model provider (e.g., mistralai, openai)"
+default = "openai"
+
+[options.MODEL_BASE_URL]
+type = "string"
+description = "Model base url"
+default = "https://api.aimlapi.com/v1"
+
 
 
 [options.MODEL_MAX_TOKENS]
@@ -41,6 +47,6 @@ default = "300"
 
 [runtimes.executable]
 command = [
-  "D:/RegiSphere/Coral-Agents/Coral-OpenDeepResearch-Agent/venv/Scripts/python.exe",
+  "D:/RegiSphere/Coral-Agents/Coral-OpenDeepResearch-Agent/.venv/Scripts/python.exe",
   "D:/RegiSphere/Coral-Agents/Coral-OpenDeepResearch-Agent/main.py"
 ]

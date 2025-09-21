@@ -6,20 +6,25 @@ description = "Handles user interaction via Coral server"
 [options.MODEL_NAME]
 type = "string"
 description = "Model name (e.g., mistral-large-latest)"
-default = "mistral-large-latest"
+default = "gpt-4o"
 
 [options.MODEL_PROVIDER]
 type = "string"
 description = "Model provider (e.g., mistralai, openai)"
-default = "mistralai"
+default = "openai"
+
+[options.MODEL_BASE_URL]
+type = "string"
+description = "Model base url"
+default = "https://api.aimlapi.com/v1"
 
 [options.MODEL_API_KEY]
 type = "string"
 description = "API key for the model provider"
-default="1xzyNsZZWm8bRvjgSjkFTJgY9CAksQfr"
+default="c46141bd2ebb4e29a106798381b97d1f"
 
 [runtimes.executable]
 command = [
-    "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/venv/Scripts/python.exe",
+    "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/.venv/Scripts/python.exe",
     "D:/RegiSphere/Coral-Agents/Coral-Interface-Agent/main.py"
 ]

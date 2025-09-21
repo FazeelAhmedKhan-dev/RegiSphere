@@ -38,6 +38,6 @@ default = "300"
 
 [runtimes.executable]
 command = [
-  "D:/RegiSphere/Coral-Agents/Coral-FirecrawlMCP-Agent/venv/Scripts/python.exe",
+  "D:/RegiSphere/Coral-Agents/Coral-FirecrawlMCP-Agent/.venv/Scripts/python.exe",
   "D:/RegiSphere/Coral-Agents/Coral-FirecrawlMCP-Agent/main.py"
 ]

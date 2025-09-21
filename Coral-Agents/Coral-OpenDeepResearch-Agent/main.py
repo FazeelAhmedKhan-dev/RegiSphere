@@ -34,7 +34,7 @@ def get_tools_description(tools):
     def serialize_schema(schema):
         # If it's a Pydantic model class, convert to schema dict
         if isinstance(schema, type) and issubclass(schema, BaseModel):
-            return schema.schema()
+            return schema.model_json_schema()
         # Otherwise fallback to string
         return str(schema)
 
