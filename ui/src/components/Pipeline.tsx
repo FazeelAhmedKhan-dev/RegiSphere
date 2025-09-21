@@ -18,6 +18,7 @@ interface PipelineProps {
 
 export default function Pipeline({ steps: initialSteps, onComplete }: PipelineProps) {
     const [steps, setSteps] = useState<AgentStep[]>(initialSteps);
+    const [isSimulationRunning, setIsSimulationRunning] = useState<boolean>(false);
 
     useEffect(() => {
         // Get session ID from URL params or props
@@ -29,49 +30,205 @@ export default function Pipeline({ steps: initialSteps, onComplete }: PipelinePr
             return;
         }
 
-        const fetchPipelineStatus = async () => {
+        // Check if we have saved pipeline progress state
+        const savedProgressKey = `pipeline-progress-${sessionId}`;
+        const savedProgress = localStorage.getItem(savedProgressKey);
+        
+        if (savedProgress) {
             try {
-                const response = await fetch(`http://localhost:8000/api/pipeline/${sessionId}/status`);
+                const progressData = JSON.parse(savedProgress);
+                console.log('Restoring pipeline progress:', progressData);
+                setSteps(progressData.steps);
+                setIsSimulationRunning(progressData.isRunning);
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                // If simulation was running, continue from where it left off
+                if (progressData.isRunning && !progressData.completed) {
+                    console.log('Continuing simulation from saved state');
+                    continueSimulation(progressData.steps, sessionId);
+                    return;
                 }
                 
-                const data = await response.json();
-                console.log('Pipeline status:', data);
+                // If pipeline was completed, trigger onComplete
+                if (progressData.completed && onComplete) {
+                    setTimeout(() => {
+                        onComplete();
+                    }, 500);
+                }
+                return;
+            } catch (error) {
+                console.error('Error parsing saved progress:', error);
+            }
+        }
+
+        const fetchPipelineStatus = () => {
+            try {
+                // Get sample data from localStorage
+                const pipelineData = localStorage.getItem(`pipeline-${sessionId}`);
                 
-                // Update steps with real data from backend
-                setSteps(data.steps.map((step: any) => ({
-                    id: step.id,
-                    name: step.name,
-                    status: step.status,
-                    message: step.message
-                })));
-                
-                // Stop polling if pipeline is completed or errored
-                if (data.status === 'completed' || data.status === 'error') {
-                    return true; // Signal to stop polling
+                if (pipelineData) {
+                    const data = JSON.parse(pipelineData);
+                    console.log('Pipeline status (sample):', data);
+                    
+                    // If pipeline is already completed, load the completed state
+                    if (data.status === 'completed') {
+                        setSteps(data.steps.map((step: any) => ({
+                            id: step.id,
+                            name: step.name,
+                            status: step.status,
+                            message: step.message
+                        })));
+                        
+                        if (onComplete) {
+                            setTimeout(() => {
+                                onComplete();
+                            }, 1000);
+                        }
+                        return true; // Signal that we have completed data
+                    } else {
+                        // Pipeline is pending, load initial steps and let simulation run
+                        setSteps(data.steps.map((step: any) => ({
+                            id: step.id,
+                            name: step.name,
+                            status: step.status,
+                            message: step.message
+                        })));
+                        return false; // Signal to run simulation
+                    }
+                } else {
+                    console.log('No pipeline data found for session:', sessionId);
+                    return false;
                 }
                 
             } catch (error) {
                 console.error('Error fetching pipeline status:', error);
+                return false;
             }
-            return false;
         };
 
-        // Initial fetch
-        fetchPipelineStatus();
+        // Simulate progressive completion for demo effect with realistic timing
+        const simulateProgress = (sessionId: string) => {
+            setIsSimulationRunning(true);
+            saveProgress(steps, sessionId, true, false);
+            return processStepsFromIndex(steps, 0, sessionId);
+        };
 
-        // Poll for updates every 2 seconds
-        const interval = setInterval(async () => {
-            const shouldStop = await fetchPipelineStatus();
-            if (shouldStop) {
-                clearInterval(interval);
+        const processStepsFromIndex = (currentSteps: AgentStep[], startIndex: number, sessionId: string) => {
+            let currentStep = startIndex;
+            const totalSteps = currentSteps.length;
+            
+            // Different durations for different steps to make it more realistic
+            const stepDurations = [
+                8000,   // Repository Analysis - 8 seconds
+                12000,  // Code Security Scan - 12 seconds  
+                10000,  // Compliance Framework Check - 10 seconds
+                9000,   // Risk Assessment - 9 seconds
+                6000    // Report Generation - 6 seconds
+            ];
+            
+            const processNextStep = () => {
+                if (currentStep < totalSteps) {
+                    // Set current step to running
+                    const updatedSteps = currentSteps.map((step, index) => ({
+                        ...step,
+                        status: index < currentStep ? "done" : 
+                               index === currentStep ? "running" : "pending"
+                    }));
+                    
+                    setSteps(updatedSteps);
+                    saveProgress(updatedSteps, sessionId, true, false);
+                    
+                    // After the step duration, mark it as done and move to next
+                    setTimeout(() => {
+                        const completedSteps = currentSteps.map((step, index) => ({
+                            ...step,
+                            status: index <= currentStep ? "done" : 
+                                   index === currentStep + 1 ? "running" : "pending"
+                        }));
+                        
+                        setSteps(completedSteps);
+                        saveProgress(completedSteps, sessionId, true, false);
+                        
+                        currentStep++;
+                        
+                        if (currentStep < totalSteps) {
+                             // Longer delay before starting next step
+                             setTimeout(processNextStep, 1500);
+                         } else {
+                             // All steps completed
+                             setTimeout(() => {
+                                 const finalSteps = currentSteps.map(step => ({ ...step, status: "done" }));
+                                 setSteps(finalSteps);
+                                 setIsSimulationRunning(false);
+                                 saveProgress(finalSteps, sessionId, false, true);
+                                 
+                                 if (onComplete) {
+                                     setTimeout(() => {
+                                         onComplete();
+                                     }, 3000);
+                                 }
+                             }, 2000);
+                         }
+                     }, stepDurations[currentStep] || 8000);
+                 }
+             };
+             
+             // Start the first step after a longer initial delay
+             const startTimeout = setTimeout(processNextStep, 2000);
+             
+             return () => {
+                 clearTimeout(startTimeout);
+             };
+         };
+
+        // Check if we have sample data, otherwise simulate progress
+        const hasSampleData = fetchPipelineStatus();
+        let cleanup: (() => void) | null = null;
+        
+        if (!hasSampleData) {
+            console.log('No sample data found, simulating progress...');
+            cleanup = simulateProgress(sessionId);
+        }
+
+        return () => {
+            if (cleanup) {
+                cleanup();
             }
-        }, 2000);
+        };
+    }, [onComplete]);
 
-        return () => clearInterval(interval);
-    }, []);
+    // Function to save current progress state
+    const saveProgress = (currentSteps: AgentStep[], sessionId: string, isRunning: boolean, completed: boolean = false) => {
+        const progressData = {
+            steps: currentSteps,
+            isRunning,
+            completed,
+            timestamp: Date.now()
+        };
+        localStorage.setItem(`pipeline-progress-${sessionId}`, JSON.stringify(progressData));
+    };
+
+    // Function to continue simulation from saved state
+    const continueSimulation = (savedSteps: AgentStep[], sessionId: string) => {
+        setIsSimulationRunning(true);
+        
+        // Find the current step (first non-done step)
+        const currentStepIndex = savedSteps.findIndex(step => step.status !== 'done');
+        
+        if (currentStepIndex === -1) {
+            // All steps are done, complete the pipeline
+            setIsSimulationRunning(false);
+            saveProgress(savedSteps, sessionId, false, true);
+            if (onComplete) {
+                setTimeout(() => {
+                    onComplete();
+                }, 1000);
+            }
+            return;
+        }
+
+        // Continue from the current step
+        processStepsFromIndex(savedSteps, currentStepIndex, sessionId);
+    };
 
     const completed = steps.filter((s) => s.status === "done").length;
     const progress = Math.round((completed / steps.length) * 100);

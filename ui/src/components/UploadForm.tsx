@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Upload } from "lucide-react";
+import { generateSampleReport } from "../utils/sampleReport";
 
 type UploadFormProps = {
     onUploadComplete: () => void;
@@ -29,28 +30,35 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
         try {
             console.log("Uploading:", payload);
             
-            // Call FastAPI backend
-            const response = await fetch('http://localhost:8000/api/projects/upload', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log('Upload successful:', result);
+            // Generate sample session ID
+            const sessionId = `sample-${Date.now()}`;
             
-            // Extract session_id from response
-            if (result.session_id) {
-                onUploadComplete(result.session_id);
-            } else {
-                throw new Error('No session ID received from server');
-            }
+            // Generate and store sample report data
+            const sampleReport = generateSampleReport(
+                payload.projectUrl,
+                payload.projectType || "Smart Contract",
+                payload.projectName || "Sample Project"
+            );
+            
+            // Store sample data in localStorage for demo purposes
+            localStorage.setItem(`report-${sessionId}`, JSON.stringify(sampleReport));
+            localStorage.setItem(`pipeline-${sessionId}`, JSON.stringify({
+                status: 'pending',
+                steps: [
+                    { id: "1", name: "Repository Analysis", status: "pending", message: "Preparing to analyze repository structure" },
+                    { id: "2", name: "Code Security Scan", status: "pending", message: "Queued for security vulnerability assessment" },
+                    { id: "3", name: "Compliance Framework Check", status: "pending", message: "Waiting to evaluate against regulatory standards" },
+                    { id: "4", name: "Risk Assessment", status: "pending", message: "Scheduled for compliance risk analysis" },
+                    { id: "5", name: "Report Generation", status: "pending", message: "Ready to generate comprehensive report" }
+                ]
+            }));
+            
+            console.log('Sample upload successful with session ID:', sessionId);
+            
+            // Simulate a brief delay for realism
+            setTimeout(() => {
+                onUploadComplete(sessionId);
+            }, 1000);
             
         } catch (error) {
             console.error('Error uploading project:', error);

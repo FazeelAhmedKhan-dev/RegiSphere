@@ -20,14 +20,18 @@ export default function Report({ sessionId }: ReportProps) {
   useEffect(() => {
     if (!sessionId) return;
 
-    const fetchReport = async () => {
+    const fetchReport = () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/pipeline/${sessionId}/report`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch report');
+        // Get sample report data from localStorage
+        const reportData = localStorage.getItem(`report-${sessionId}`);
+        
+        if (reportData) {
+          const data = JSON.parse(reportData);
+          setReport(data);
+          console.log('Sample report loaded:', data);
+        } else {
+          throw new Error('No sample report data found');
         }
-        const data = await response.json();
-        setReport(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load report');
       } finally {
@@ -35,7 +39,10 @@ export default function Report({ sessionId }: ReportProps) {
       }
     };
 
-    fetchReport();
+    // Simulate loading delay for realism
+    setTimeout(() => {
+      fetchReport();
+    }, 500);
   }, [sessionId]);
 
   if (loading) {
