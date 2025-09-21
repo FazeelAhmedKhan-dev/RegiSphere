@@ -3,23 +3,26 @@ name = "deepsearch"
 version = "0.0.1"
 description = "Conducts in-depth research to uncover compliance requirements and risks."
 
-[options.OPENAI_API_KEY]
+[options.API_Key]
 type = "string"
-description = "OpenAI API key for the model provider"
+description = "Mistral API key for the model provider"
+default="1xzyNsZZWm8bRvjgSjkFTJgY9CAksQfr"
 
 [options.LINKUP_API_KEY]
 type = "string"
 description = "Linkup API key for orchestration"
+default="9ffb5ac3-1d3f-4ad5-962c-e73885f81933"
 
 [options.MODEL_NAME]
 type = "string"
 description = "What model to use (e.g 'gpt-4.1')"
-default = "gpt-4.1-mini"
+default = "mistral-large-latest"
 
 [options.MODEL_PROVIDER]
 type = "string"
 description = "What model provider to use (e.g 'openai', etc)"
-default = "openai"
+default="mistralai"
+
 
 [options.MODEL_MAX_TOKENS]
 type = "string"

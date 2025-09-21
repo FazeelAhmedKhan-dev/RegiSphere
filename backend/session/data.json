@@ -1,6 +1,6 @@
 {
-  "privacyKey": "priv",
-  "applicationId": "app",
+  "privacyKey": "1234",
+  "applicationId": "agent-1",
   "agentGraphRequest": {
     "agents": [
       {
@@ -15,12 +15,7 @@
           "runtime": "executable"
         },
         "blocking": true,
-        "options": {
-          "MODEL_API_KEY": {
-            "type": "string",
-            "value": "1xzyNsZZWm8bRvjgSjkFTJgY9CAksQfr"
-          }
-        },
+        "options": { },
         "customToolAccess": [
           "user-input-request",
           "user-input-respond"
@@ -38,24 +33,7 @@
           "runtime": "executable"
         },
         "blocking": true,
-        "options": {
-          "OPENAI_API_KEY": {
-            "type": "string",
-            "value": "1xzyNsZZWm8bRvjgSjkFTJgY9CAksQfr"
-          },
-          "LINKUP_API_KEY": {
-            "type": "string",
-            "value": "9ffb5ac3-1d3f-4ad5-962c-e73885f81933"
-          },
-          "MODEL_NAME": {
-            "type": "string",
-            "value": "mistral-large-latest"
-          },
-          "MODEL_PROVIDER": {
-            "type": "string",
-            "value": "mistralai"
-          }
-        },
+        "options": { },
         "customToolAccess": [ ]
       }
     ],
@@ -63,7 +41,7 @@
       "user-input-request": {
         "transport": {
           "type": "http",
-          "url": "http://localhost:5173/api/mcp-tools/user-input-request"
+          "url": "http://localhost:5174/api/mcp-tools/user-input-request"
         },
         "toolSchema": {
           "name": "request-question",
@@ -82,7 +60,7 @@
       "user-input-respond": {
         "transport": {
           "type": "http",
-          "url": "http://localhost:5173/api/mcp-tools/user-input-respond"
+          "url": "http://localhost:5174/api/mcp-tools/user-input-respond"
         },
         "toolSchema": {
           "name": "answer-question",

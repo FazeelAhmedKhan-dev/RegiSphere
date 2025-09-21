@@ -15,7 +15,7 @@ if runtime == "devmode":
 if not os.environ.get("LINKUP_API_KEY"):
     raise ValueError("LINKUP_API_KEY environment variable is not set")
 
-if "MISTRAL_API_KEY" not in os.environ:
+if "API_KEY" not in os.environ:
     raise ValueError("This agent requires MISTRAL_API_KEY to be set")
 
 

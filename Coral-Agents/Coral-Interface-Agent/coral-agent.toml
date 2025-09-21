@@ -16,6 +16,7 @@ default = "mistralai"
 [options.MODEL_API_KEY]
 type = "string"
 description = "API key for the model provider"
+default="1xzyNsZZWm8bRvjgSjkFTJgY9CAksQfr"
 
 [runtimes.executable]
 command = [
